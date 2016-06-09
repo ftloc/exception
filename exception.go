@@ -83,6 +83,12 @@ func Throw(i interface{}) {
 	panic(i)
 }
 
+func ThrowOnFalse(b bool, i interface{}) {
+	if !b {
+		Throw(i)
+	}
+}
+
 func ThrowOnError(e error, i interface{}) {
 	if nil != e {
 		Throw(i)
