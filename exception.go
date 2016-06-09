@@ -82,3 +82,15 @@ func (to *tryer) Finally(finfn func()) {
 func Throw(i interface{}) {
 	panic(i)
 }
+
+func ThrowOnError(e error, i interface{}) {
+	if nil != e {
+		Throw(i)
+	}
+}
+
+func ThrowOnErrorFn(e error, f func() interface{}) {
+	if nil != e {
+		Throw(f())
+	}
+}
