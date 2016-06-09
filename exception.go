@@ -30,12 +30,6 @@ type (
 		catches  map[reflect.Type]interface{}
 		catchall func(interface{})
 	}
-	Exception struct {
-		Message string
-	}
-	OtherException struct {
-		Message string
-	}
 )
 
 func Try(mainfn func()) Tryer {
