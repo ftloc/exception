@@ -32,6 +32,7 @@ type (
 	}
 )
 
+// Try creates a Tryer object with some default values
 func Try(mainfn func()) Tryer {
 	return &tryer{
 		mainfn:   mainfn,
@@ -42,8 +43,8 @@ func Try(mainfn func()) Tryer {
 
 func (t *tryer) Catch(fn interface{}) Tryer {
 	va := reflect.ValueOf(fn)
-	if va.Kind() != reflect.Func || va.Type().NumIn() == 0 {
-		panic("Catch needs a function")
+	if va.Kind() != reflect.Func || va.Type().NumIn() == 1 {
+		panic("Catch needs a function with exactly one parameter")
 	}
 
 	typ := va.Type().In(0)
