@@ -7,6 +7,7 @@ import (
 )
 
 type (
+	// Tryer is the interface that is exposed that encapsules the packages functionality. You may exchange the implementation easily if you deem it necessarily
 	Tryer interface {
 		Catch(interface{}) Tryer
 		CatchAll(func(interface{})) Tryer
@@ -48,20 +49,20 @@ func (t *tryer) CatchAll(fn func(interface{})) Tryer {
 
 // Finally initiates the call to the tried function and is always called after
 // the function was executed, no matter if an exception occured or not.
-func (to *tryer) Finally(finfn func()) {
+func (t *tryer) Finally(finfn func()) {
 	defer func() {
 		defer finfn()
 		if r := recover(); r != nil {
-			t := reflect.TypeOf(r)
-			fn, ok := to.catches[t]
+			tyo := reflect.TypeOf(r)
+			fn, ok := t.catches[tyo]
 			if !ok {
-				to.catchall(r)
+				t.catchall(r)
 				return
 			}
 			caller.CallWith(fn, r)
 		}
 	}()
-	to.mainfn()
+	t.mainfn()
 }
 
 // Throw an exception. Any type qualifies as an exception.
@@ -69,28 +70,28 @@ func Throw(i interface{}) {
 	panic(i)
 }
 
-// Throw an exception if the bool b equals false
+// ThrowOnFalse throws an exception if the bool b equals false
 func ThrowOnFalse(b bool, i interface{}) {
 	if !b {
 		Throw(i)
 	}
 }
 
-// Throw an exception (produced by f) if the bool b equals false
+// ThrowOnFalseFn throws an exception (produced by f) if the bool b equals false
 func ThrowOnFalseFn(b bool, f func() interface{}) {
 	if !b {
 		Throw(f())
 	}
 }
 
-// Throw an exception if e is not nil
+// ThrowOnError throws an exception if e is not nil
 func ThrowOnError(e error, i interface{}) {
 	if nil != e {
 		Throw(i)
 	}
 }
 
-// Throw an exception (produced by f) if e is not nil
+// ThrowOnErrorFn throws an exception (produced by f) if e is not nil
 func ThrowOnErrorFn(e error, f func() interface{}) {
 	if nil != e {
 		Throw(f())
