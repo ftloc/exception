@@ -43,8 +43,8 @@ func Try(mainfn func()) Tryer {
 
 func (t *tryer) Catch(fn interface{}) Tryer {
 	va := reflect.ValueOf(fn)
-	if va.Kind() != reflect.Func || va.Type().NumIn() == 1 {
-		panic("Catch needs a function with exactly one parameter")
+	if va.Kind() != reflect.Func || va.Type().NumIn() != 1 {
+		panic("Catch needs a function with exactly one parameter (got: " + va.Type().String() + " with " + strconv.Itoa(va.Type().NumIn()) + " arguments)")
 	}
 
 	typ := va.Type().In(0)
