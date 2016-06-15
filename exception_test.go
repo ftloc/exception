@@ -4,8 +4,29 @@ import (
 	"github.com/ftloc/exception"
 
 	"errors"
+	"fmt"
 	"testing"
 )
+
+func ExampleTry() {
+	exception.Try(func() {
+		// do something
+		if 1 == 2 {
+			// oh noes, something is wrong
+			exception.Throw("1 should not be == 2")
+		}
+
+		exception.Throw(struct{ a int }{a: 1})
+	}).Catch(func(s string) {
+		fmt.Printf("Caught a string: %s\n", s)
+	}).CatchAll(func(i interface{}) {
+		fmt.Printf("Caught something: %+v\n", i)
+	}).Finally(func() {
+		fmt.Println("Something might have been wrong ... who knows ...")
+	})
+	// Output: Caught something: {a:1}
+	// Something might have been wrong ... who knows ...
+}
 
 func TestTry(t *testing.T) {
 	exception.Try(func() {}).Finally(func() {})
