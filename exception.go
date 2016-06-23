@@ -1,9 +1,12 @@
 package exception
 
 import (
-	"github.com/ftloc/caller"
 	"reflect"
+	"runtime"
 	"strconv"
+	"strings"
+
+	"github.com/ftloc/caller"
 )
 
 type (
@@ -18,6 +21,10 @@ type (
 		catches  map[reflect.Type]interface{}
 		catchall func(interface{})
 	}
+)
+
+var (
+	pkgPath = reflect.TypeOf(tryer{}).PkgPath()
 )
 
 // Try creates a Tryer object. The given function will be called, when finally on the Tryer object is called.
@@ -96,4 +103,28 @@ func ThrowOnErrorFn(e error, f func() interface{}) {
 	if nil != e {
 		Throw(f())
 	}
+}
+
+// GetThrower scans the callstack for the last panic / exception.Throw* call and returns the filename and line, returns false as first parameter if nothing paniced
+func GetThrower() (bool, string, int) {
+	cs := make([]uintptr, 20)
+	amount := runtime.Callers(2, cs)
+	usedThrower := false
+	var pfield *runtime.Func = nil
+
+	for i := 0; i < amount; i++ {
+		f := runtime.FuncForPC(cs[i])
+		if f.Name() == "runtime.gopanic" {
+			pfield = f
+		} else if pfield != nil && strings.HasPrefix(f.Name(), pkgPath+".") {
+			usedThrower = true
+		} else if pfield != nil {
+			if !usedThrower {
+				return false, "", 0
+			}
+			fi, li := f.FileLine(f.Entry())
+			return true, fi, li
+		}
+	}
+	return false, "", 0
 }
