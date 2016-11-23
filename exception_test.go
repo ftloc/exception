@@ -107,6 +107,16 @@ func TestFinally(t *testing.T) {
 	}
 }
 
+func TestGo(t *testing.T) {
+	called := false
+	exception.Try(func() {
+		called = true
+	}).Go()
+	if !called {
+		t.Fatal("The function was never called.")
+	}
+}
+
 func TestThrowOnFalse(t *testing.T) {
 	exception.ThrowOnFalse(true, 1)
 	called := false

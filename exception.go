@@ -16,6 +16,7 @@ type (
 		CatchAll(func(interface{})) Tryer
 		Ignore() Tryer
 		Finally(func())
+		Go()
 	}
 	tryer struct {
 		mainfn   func()
@@ -77,6 +78,11 @@ func (t *tryer) Finally(finfn func()) {
 		}
 	}()
 	t.mainfn()
+}
+
+// Go is a shorthand version of Finally(func(){})
+func (t *tryer) Go() {
+	t.Finally(func() {})
 }
 
 // Throw an exception. Any type qualifies as an exception.
