@@ -170,6 +170,29 @@ func TestGetThrowerWithoutException(t *testing.T) {
 	}
 }
 
+func TestGetThrowerInFinallyWithoutException(t *testing.T) {
+	exception.Try(func() {
+	}).Finally(func() {
+		ok, _, _ := exception.GetThrower()
+		if ok {
+			t.Fatal("Got thrower without exception.")
+		}
+	})
+}
+
+// not sure why we disallow that
+func TestGetThrowerWithoutExceptionHandler(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			ok, _, _ := exception.GetThrower()
+			if ok {
+				t.Fatal("Got thrower without exception.")
+			}
+		}
+	}()
+	panic("call recover")
+}
+
 func TestGetThrowerWithException(t *testing.T) {
 	type ts struct{}
 	exception.Try(func() {
