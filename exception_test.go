@@ -29,6 +29,21 @@ func ExampleTry() {
 	// Something might have been wrong ... who knows ...
 }
 
+func someFuncThatMightGoWrongButDoesntMatter() {}
+func ExampleIgnore() {
+	// will call the function but ignore all errors
+	exception.Try(someFuncThatMightGoWrongButDoesntMatter).Ignore().Go()
+}
+
+func ExampleGo() {
+	// will throw an exception and catch it
+	exception.Try(func() {
+		exception.Throw("Something is wrong!")
+	}).Catch(func(string) {
+		// will get here
+	}).Go()
+}
+
 func TestTry(t *testing.T) {
 	exception.Try(func() {}).Finally(func() {})
 }
