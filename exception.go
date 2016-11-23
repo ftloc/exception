@@ -14,6 +14,7 @@ type (
 	Tryer interface {
 		Catch(interface{}) Tryer
 		CatchAll(func(interface{})) Tryer
+		Ignore() Tryer
 		Finally(func())
 	}
 	tryer struct {
@@ -51,6 +52,12 @@ func (t *tryer) Catch(fn interface{}) Tryer {
 // CatchAll catches all exceptions and panics that occur within the tried function, that are not specifically caught.
 func (t *tryer) CatchAll(fn func(interface{})) Tryer {
 	t.catchall = fn
+	return t
+}
+
+// Ignore catches all exceptions and silently ignores them
+func (t *tryer) Ignore() Tryer {
+	t.catchall = func(interface{}) {}
 	return t
 }
 

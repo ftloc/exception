@@ -62,6 +62,10 @@ func TestCatchAll(t *testing.T) {
 	exception.Try(func() { exception.Throw(1) }).CatchAll(func(i interface{}) {}).Finally(func() {})
 }
 
+func TestIgnore(t *testing.T) {
+	exception.Try(func() { exception.Throw(1) }).Ignore().Finally(func() {})
+}
+
 func TestFinally(t *testing.T) {
 	called := false
 	exception.Try(func() {}).Finally(func() { called = true })
