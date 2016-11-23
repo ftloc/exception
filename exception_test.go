@@ -5,6 +5,7 @@ import (
 
 	"errors"
 	"fmt"
+	"path"
 	"testing"
 )
 
@@ -160,4 +161,36 @@ func TestThrowOnErrorFn(t *testing.T) {
 	if !called {
 		t.Fail()
 	}
+}
+
+func TestGetThrowerWithoutException(t *testing.T) {
+	ok, _, _ := exception.GetThrower()
+	if ok {
+		t.Fatal("Got thrower without exception.")
+	}
+}
+
+func TestGetThrowerWithException(t *testing.T) {
+	type ts struct{}
+	exception.Try(func() {
+		exception.Throw(ts{})
+	}).Catch(func(ts) {
+		ok, f, _ := exception.GetThrower()
+		if !ok {
+			t.Fatal("Got no thrower in Catch.")
+		}
+		_, file := path.Split(f)
+		if file != "exception_test.go" {
+			t.Fatal("Wrong file identified.")
+		}
+	}).Finally(func() {
+		ok, f, _ := exception.GetThrower()
+		if !ok {
+			t.Fatal("Got no thrower in Finally.")
+		}
+		_, file := path.Split(f)
+		if file != "exception_test.go" {
+			t.Fatal("Wrong file identified.")
+		}
+	})
 }
