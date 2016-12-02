@@ -246,3 +246,39 @@ func TestGetThrowerWithException(t *testing.T) {
 		}
 	})
 }
+
+type (
+	I interface {
+		Ok() bool
+	}
+	i struct {
+	}
+)
+
+func (i) Ok() bool { return true }
+
+func TestExceptionConvertible(t *testing.T) {
+	// test with error interface
+	caught := false
+	exception.Try(func() {
+		exception.Throw(errors.New("test"))
+		t.Error("No error")
+	}).Catch(func(e error) {
+		caught = true
+	}).Go()
+	if !caught {
+		t.Fail()
+	}
+
+	// test with "custom type"
+	caught = false
+	exception.Try(func() {
+		exception.Throw(i{})
+		t.Fail()
+	}).Catch(func(i I) {
+		caught = i.Ok()
+	}).Go()
+	if !caught {
+		t.Fail()
+	}
+}

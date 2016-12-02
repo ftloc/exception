@@ -68,16 +68,29 @@ func (t *tryer) Finally(finfn func()) {
 	defer func() {
 		defer finfn()
 		if r := recover(); r != nil {
-			tyo := reflect.TypeOf(r)
-			fn, ok := t.catches[tyo]
-			if !ok {
-				t.catchall(r)
-				return
-			}
-			caller.CallWith(fn, r)
+			t.findHandler(r)
 		}
 	}()
 	t.mainfn()
+}
+
+// This function implements the search for the correct handler
+func (t *tryer) findHandler(r interface{}) {
+	tyo := reflect.TypeOf(r)
+
+	if fn, ok := t.catches[tyo]; ok {
+		caller.CallWith(fn, r)
+		return
+	}
+
+	for tt, fn := range t.catches {
+		if tyo.ConvertibleTo(tt) {
+			caller.CallWith(fn, r)
+			return
+		}
+	}
+
+	t.catchall(r)
 }
 
 // Go is a shorthand version of Finally(func(){})
