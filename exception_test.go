@@ -30,6 +30,7 @@ func ExampleTry() {
 }
 
 func someFuncThatMightGoWrongButDoesntMatter() {}
+
 func ExampleIgnore() {
 	// will call the function but ignore all errors
 	exception.Try(someFuncThatMightGoWrongButDoesntMatter).Ignore().Go()
