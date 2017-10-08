@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func ExampleTry() {
+func ExampleTry_finally() {
 	exception.Try(func() {
 		// do something
 		if 1 == 2 {
@@ -31,12 +31,12 @@ func ExampleTry() {
 
 func someFuncThatMightGoWrongButDoesntMatter() {}
 
-func ExampleIgnore() {
+func ExampleTry_ignore() {
 	// will call the function but ignore all errors
 	exception.Try(someFuncThatMightGoWrongButDoesntMatter).Ignore().Go()
 }
 
-func ExampleGo() {
+func ExampleTry_go() {
 	// will throw an exception and catch it
 	exception.Try(func() {
 		exception.Throw("Something is wrong!")
