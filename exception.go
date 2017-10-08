@@ -63,7 +63,7 @@ func (t *tryer) Ignore() Tryer {
 }
 
 // Finally initiates the call to the tried function and is always called after
-// the function was executed, no matter if an exception occured or not.
+// the function was executed, no matter if an exception occurred or not.
 func (t *tryer) Finally(finfn func()) {
 	defer func() {
 		defer finfn()
