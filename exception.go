@@ -136,7 +136,7 @@ func GetThrower() (bool, string, int) {
 	cs := make([]uintptr, 20)
 	amount := runtime.Callers(2, cs)
 	usedThrower := false
-	var pfield *runtime.Func = nil
+	var pfield *runtime.Func
 
 	for i := 0; i < amount; i++ {
 		f := runtime.FuncForPC(cs[i])
